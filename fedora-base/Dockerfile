@@ -1,6 +1,8 @@
 FROM registry.fedoraproject.org/f33/fedora-toolbox:33
 
 ARG BUILD_DATE
+ARG VERSION
+ARG REVISION
 
 # Update labels
 LABEL summary="Development container using toolbox. Based on Fedora"
