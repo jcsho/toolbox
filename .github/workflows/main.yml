@@ -30,7 +30,7 @@ jobs:
             BUILD_DATE=${{ steps.date.outputs.date }}
             VERSION=${{ github.event.inputs.imageTag }}
             REVISION=${{ github.sha }}
-          context: ./toolbox/fedora-base
+          context: ./fedora-base
           platforms: linux/amd64
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/fedora-base:${{ github.event.inputs.imageTag }}
