@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'Image Tag'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get current date time
+        id: date
+        run: echo "::set-output name=date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          build-args: |
+            BUILD_DATE=${{ steps.date.outputs.date }}
+            VERSION=${{ github.event.inputs.imageTag }}
+            REVISION=${{ github.sha }}
+          context: ./toolbox/fedora-base
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/fedora-base:${{ github.event.inputs.imageTag }}
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
